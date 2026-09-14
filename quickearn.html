@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>QuickEarn</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f7fb;color:#111827}
+.app{max-width:520px;margin:auto;min-height:100vh;background:#f5f7fb}
+header{background:#111827;color:#fff;padding:22px 18px 28px;border-radius:0 0 24px 24px}
+.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:22px;font-weight:800}
+.icon{background:#243044;border:0;color:#fff;width:42px;height:42px;border-radius:14px;font-size:20px}
+.balance{margin-top:24px}.small{font-size:13px;opacity:.75}.amount{font-size:36px;font-weight:850;margin-top:3px}
+main{padding:18px}.card{background:#fff;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 5px 20px #1118270d}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.title{font-size:18px;font-weight:800}
+.muted{color:#6b7280;font-size:14px}.task{padding:14px 0;border-bottom:1px solid #edf0f4}.task:last-child{border:0;padding-bottom:0}
+.task h3{margin:0 0 4px;font-size:15px}.reward{font-weight:800;color:#15803d}
+button.primary{border:0;background:#2563eb;color:#fff;border-radius:13px;padding:11px 15px;font-weight:750}
+button.secondary{border:1px solid #dbe1ea;background:#fff;color:#111827;border-radius:13px;padding:10px 14px;font-weight:700}
+button:disabled{opacity:.45}
+nav{position:sticky;bottom:0;background:#fff;border-top:1px solid #e5e7eb;display:flex;justify-content:space-around;padding:10px 5px calc(10px + env(safe-area-inset-bottom))}
+nav button{border:0;background:none;color:#6b7280;font-weight:700;font-size:12px}.active{color:#2563eb!important}
+input,select{width:100%;padding:13px;border:1px solid #d9dee8;border-radius:12px;margin:7px 0 12px;font-size:15px}
+.notice{background:#eff6ff;color:#1e40af;border-radius:13px;padding:12px;font-size:13px}
+.hidden{display:none}.success{background:#ecfdf5;color:#166534;padding:12px;border-radius:12px;margin-top:10px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="top"><div class="brand">⚡ QuickEarn</div><button class="icon" onclick="resetDemo()">↻</button></div>
+ <div class="balance"><div class="small">Available balance</div><div class="amount" id="balance">₦0</div></div>
+</header>
+
+<main>
+<section id="home">
+ <div class="card">
+  <div class="row"><div><div class="title">Earn by completing tasks</div><div class="muted">Complete simple verified tasks and build your balance.</div></div>💰</div>
+ </div>
+ <div class="card">
+  <div class="row"><div class="title">Available tasks</div><span class="muted" id="taskCount"></span></div>
+  <div id="tasks"></div>
+ </div>
+ <div class="notice">Demo app: rewards are simulated. Connect a real task provider and payment processor before accepting real deposits or promising payouts.</div>
+</section>
+
+<section id="wallet" class="hidden">
+ <div class="card">
+  <div class="title">Withdraw earnings</div>
+  <div class="muted" style="margin:5px 0 14px">Set your payout details and submit a withdrawal request.</div>
+  <label>Amount (₦)</label><input id="withdrawAmount" type="number" min="100" placeholder="Minimum ₦100">
+  <label>Bank</label>
+  <select id="bank"><option value="">Select bank</option><option>Access Bank</option><option>GTBank</option><option>First Bank</option><option>UBA</option><option>Zenith Bank</option><option>Opay</option><option>Palmpay</option></select>
+  <label>Account number</label><input id="account" inputmode="numeric" maxlength="10" placeholder="10-digit account number">
+  <button class="primary" style="width:100%" onclick="withdraw()">Request withdrawal</button>
+  <div id="withdrawMsg"></div>
+ </div>
+ <div class="card"><div class="title">Recent activity</div><div id="activity" class="muted" style="margin-top:10px">No activity yet.</div></div>
+</section>
+
+<section id="profile" class="hidden">
+ <div class="card">
+  <div class="title">Profile</div>
+  <label>Name</label><input id="name" placeholder="Your name">
+  <label>Email</label><input id="email" type="email" placeholder="you@example.com">
+  <button class="primary" onclick="saveProfile()">Save profile</button>
+  <div id="profileMsg"></div>
+ </div>
+ <div class="card"><div class="title">How it works</div><p class="muted">1. Choose a task<br>2. Complete it<br>3. Submit/verify completion<br>4. Approved rewards appear in your wallet<br>5. Request a withdrawal when eligible</p></div>
+</section>
+</main>
+
+<nav>
+ <button id="navHome" class="active" onclick="show('home',this)">⌂<br>Home</button>
+ <button onclick="show('wallet',this)">₦<br>Wallet</button>
+ <button onclick="show('profile',this)">●<br>Profile</button>
+</nav>
+</div>
+
+<script>
+const KEY='quickearn_demo_v1';
+let state=JSON.parse(localStorage.getItem(KEY)||'{"balance":0,"activity":[],"done":[],"profile":{}}');
+const tasks=[
+ {id:1,title:'Daily check-in',desc:'Open the app and complete your daily check-in.',reward:50},
+ {id:2,title:'Quick survey',desc:'Answer a short sample survey.',reward:100},
+ {id:3,title:'Learning quiz',desc:'Complete a 5-question knowledge quiz.',reward:75},
+ {id:4,title:'Product feedback',desc:'Give feedback on a sample product.',reward:125}
+];
+const money=n=>'₦'+Number(n).toLocaleString('en-NG');
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function render(){
+ document.getElementById('balance').textContent=money(state.balance);
+ document.getElementById('taskCount').textContent=tasks.length-state.done.length+' remaining';
+ document.getElementById('tasks').innerHTML=tasks.map(t=>{
+  const done=state.done.includes(t.id);
+  return `<div class="task"><div class="row"><div><h3>${t.title}</h3><div class="muted">${t.desc}</div><div class="reward">+${money(t.reward)}</div></div>
+  <button class="${done?'secondary':'primary'}" ${done?'disabled':''} onclick="complete(${t.id})">${done?'Completed':'Start'}</button></div></div>`;
+ }).join('');
+ document.getElementById('activity').innerHTML=state.activity.length?state.activity.map(x=>`<div style="padding:8px 0;border-bottom:1px solid #eee">${x}</div>`).join(''):'No activity yet.';
+ document.getElementById('name').value=state.profile.name||'';
+ document.getElementById('email').value=state.profile.email||'';
+}
+function complete(id){
+ const t=tasks.find(x=>x.id===id); if(!t||state.done.includes(id))return;
+ state.done.push(id); state.balance+=t.reward; state.activity.unshift(`Task completed: ${t.title} — +${money(t.reward)}`);
+ save();render();alert(`Task completed! ${money(t.reward)} added to your demo balance.`);
+}
+function withdraw(){
+ const amount=Number(document.getElementById('withdrawAmount').value);
+ const bank=document.getElementById('bank').value, account=document.getElementById('account').value.trim();
+ const msg=document.getElementById('withdrawMsg');
+ if(amount<100)return msg.innerHTML='<div class="success" style="background:#fef2f2;color:#991b1b">Minimum withdrawal is ₦100.</div>';
+ if(amount>state.balance)return msg.innerHTML='<div class="success" style="background:#fef2f2;color:#991b1b">Insufficient balance.</div>';
+ if(!bank||!/^\d{10}$/.test(account))return msg.innerHTML='<div class="success" style="background:#fef2f2;color:#991b1b">Please select a bank and enter a valid 10-digit account number.</div>';
+ state.balance-=amount; state.activity.unshift(`Withdrawal request: ${money(amount)} to ${bank} ••••${account.slice(-4)} — Pending`);
+ save();render();msg.innerHTML='<div class="success">Withdrawal request recorded as <b>Pending</b>. In a real app, your secure payment backend would process it.</div>';
+}
+function saveProfile(){
+ state.profile={name:document.getElementById('name').value.trim(),email:document.getElementById('email').value.trim()};
+ save();document.getElementById('profileMsg').innerHTML='<div class="success">Profile saved.</div>';
+}
+function show(id,btn){
+ ['home','wallet','profile'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+}
+function resetDemo(){if(confirm('Reset the demo balance and tasks?')){localStorage.removeItem(KEY);location.reload();}}
+render();
+</script>
+</body>
+</html>
