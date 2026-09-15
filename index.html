@@ -76,9 +76,9 @@ let user=JSON.parse(localStorage.getItem(userKey)||'null');
 let data=JSON.parse(localStorage.getItem(dataKey)||'null');
 if(!user) user={name:'Demo User',email:'demo@example.com',balance:0,tasks:0,refs:0,history:[],code:'QE-'+Math.random().toString(36).slice(2,8).toUpperCase()};
 if(!data)data={tasks:[
-{id:'t1',name:'Daily check-in',reward:50},
-{id:'t2',name:'Simple survey',reward:100},
-{id:'t3',name:'App feedback',reward:150}],withdrawals:[]};
+{id:'t1',name:'Daily check-in',reward:5000},
+{id:'t2',name:'Simple survey',reward:10000},
+{id:'t3',name:'App feedback',reward:15000}],withdrawals:[]};
 function save(){localStorage.setItem(userKey,JSON.stringify(user));localStorage.setItem(dataKey,JSON.stringify(data))}
 function money(n){return '₦'+Number(n).toLocaleString()}
 function refresh(){
