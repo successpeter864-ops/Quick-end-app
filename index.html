@@ -73,11 +73,27 @@ if(!user) user={name:'Demo User',email:'demo@example.com',balance:0,tasks:0,refs
 if(!data)data={tasks:[
 {id:'t1',name:'Daily check-in',reward:5000},
 {id:'t2',name:'Simple survey',reward:10000},
-{id:'t3',name:'App feedback',reward:15000}],withdrawals:[]};
+{id:'t3',name:'App feedback',reward:15000},
+{id:'t4',name:'Watch a short video',reward:7500},
+{id:'t5',name:'Answer questions',reward:12000},
+{id:'t6',name:'Daily quiz',reward:8000},
+{id:'t7',name:'Product review',reward:20000},
+{id:'t8',name:'App testing',reward:25000},
+{id:'t9',name:'Website feedback',reward:18000},
+{id:'t10',name:'Complete profile',reward:10000},
+{id:'t11',name:'Read an article',reward:6000},
+{id:'t12',name:'Rate an app',reward:9000},
+{id:'t13',name:'Customer survey',reward:14000},
+{id:'t14',name:'Try a demo',reward:11000},
+{id:'t15',name:'Feedback form',reward:13000},
+{id:'t16',name:'Daily challenge',reward:16000},
+{id:'t17',name:'Service review',reward:22000},
+{id:'t18',name:'Market research',reward:30000},
+{id:'t19',name:'User experience test',reward:35000},
+{id:'t20',name:'Weekly bonus task',reward:50000}
+],withdrawals:[]};
 function save(){localStorage.setItem(userKey,JSON.stringify(user));localStorage.setItem(dataKey,JSON.stringify(data))}
-function money(n){return '₦'+Number(n).toLocaleString()}
-function refresh(){
-document.getElementById('balance').textContent=money(user.balance);document.getElementById('balance2').textContent=money(user.balance);
+function money(n){return '₦'+Number(n).toLocaleString()}ment.getElementByIdtById('balance').textContent=money(user.balance);document.getElementById('balance2').textContent=money(user.balance);
 document.getElementById('tasks').textContent=user.tasks;document.getElementById('refs').textContent=user.refs;
 document.getElementById('refCount').textContent=user.refs;document.getElementById('code').textContent=user.code;
 document.getElementById('pname').textContent=user.name;document.getElementById('pemail').textContent=user.email;document.getElementById('pcode').textContent=user.code;
