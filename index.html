@@ -68,7 +68,9 @@ table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:9px 5px;b
 <button onclick="show('profile')">👤<br>Me</button>
 <button onclick="show('admin')">👑<br>Admin</button>
 </nav>
-</'quickEndV4User'onst userKey='quickEndV5User', dataKetitler=JSON.parse(localStorage.getItem(userKey)||'null')'quickEndV4Data'et data=JSON.parse(localStorage.getItem(dataKey)||'null');
+const userKey='quickEndV5User',dataKey='quickEndV5Data';
+let user=JSON.parse(localStorage.getItem(userKey)||'null');
+let data=JSON.parse(localStorage.getItem(dataKey)||'null');
 if(!user) user={name:'Demo User',email:'demo@example.com',balance:0,tasks:0,refs:0,history:[],code:'QE-'+Math.random().toString(36).slice(2,8).toUpperCase()};
 if(!data)data={tasks:[
 {id:'t1',name:'Daily check-in',reward:5000},
@@ -98,8 +100,7 @@ document.getElementById('tasks').textContent=user.tasks;document.getElementById(
 document.getElementById('refCount').textContent=user.refs;document.getElementById('code').textContent=user.code;
 document.getElementById('pname').textContent=user.name;document.getElementById('pemail').textContent=user.email;document.getElementById('pcode').textContent=user.code;
 document.getElementById('tasksList').innerHTML=data.tasks.map(t=>'<div class="task"><div class="row"><div><h3>'+t.name+'</h3><span class="muted">Complete an eligible task</span></div><b>'+money(t.reward)+'</b></div><br><button onclick="completeTask(\''+t.id+'\')">Complete task</button></div>').join('');
-document.getElementById('historyList').innerHTML=user.history.length?user.history.map(x=>'<div class="card">'+x+'</div>').join(''):'<p class="muted">No transactions yet.</p>';
-renderAdmin();
+)">Complete task</button></div>`).join('');renderAdmin();
 }
 function show(id){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');refresh()}
 function completeTask(id){let t=data.tasks.find(x=>x.id===id);if(!t)return;user.balance+=t.reward;user.tasks++;user.history.unshift('<b>'+t.name+'</b><br><span style="color:#5be48b">+'+money(t.reward)+'</span><br><span class="muted">Demo task reward</span>');save();refresh();alert('Task completed. '+money(t.reward)+' added to your demo balance.')}
